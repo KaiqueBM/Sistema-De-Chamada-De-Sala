@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
             // Limpar os campos
             limpaCampos()
 
+
             // fazer a chamada
             startActivity(telaAreaDoAluno)
             }
