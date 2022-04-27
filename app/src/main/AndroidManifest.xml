@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pdm">
         <activity
+            android:name=".CronogramaDeAulas"
+            android:exported="false" />
+        <activity
             android:name=".AreaDoAluno"
             android:exported="false" />
         <activity
