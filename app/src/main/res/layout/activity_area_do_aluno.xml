@@ -29,7 +29,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="@string/nomeAluno" />
+        android:text="" />
 
     <TextView
         android:id="@+id/raAluno"
@@ -39,7 +39,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="RA:"/>
+        android:text=""/>
 
     <TextView
         android:id="@+id/diaLogin"
@@ -49,7 +49,17 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="@string/diaAluno" />
+        android:text="" />
+
+    <TextView
+        android:id="@+id/localizacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="" />
 
 
 
@@ -79,7 +89,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Matéria do dia" />
+        android:text="" />
 
     <TextView
         android:id="@+id/situacaoAula"

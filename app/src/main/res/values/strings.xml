@@ -4,6 +4,7 @@
     <string name="txtRA">Informe o seu RA:</string>
     <string name="txtSenha">Informe a sua senha: </string>
     <string name="btnConectar">LOGAR</string>
+    <string name="btnFechar">Fechar App</string>
 
     <string name="btnDeslogar">Desconectar</string>
     <string name="TitleAreaDoAluno">Área do Aluno</string>

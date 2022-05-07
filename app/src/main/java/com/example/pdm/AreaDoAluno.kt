@@ -27,70 +27,68 @@ class AreaDoAluno : AppCompatActivity() {
         // Recuperando os parâmetros passados
         val dados = intent
         val parametros = dados.extras
-        val sNome = parametros!!.getString("ra")
+        val sRa = parametros!!.getString("ra")
+        val sNome = parametros!!.getString("nome")
+        var registro = false
 
-        // Atualizando a tela
-        val txtNome: TextView = findViewById(R.id.raAluno)
-        txtNome.text = "RA: $sNome"
+        // Atualizando campos de texto com informações do aluno
+        val txtNome: TextView = findViewById(R.id.nomeAluno)
+        txtNome.text = "Nome: $sNome" //Mostrar nome do aluno
+        val txtRa: TextView = findViewById(R.id.raAluno)
+        txtRa.text = "RA: $sRa" //Mostrar Ra do aluno
 
+        // Pegar dados de data e horário
         val date = Calendar.getInstance().time
         var horario = SimpleDateFormat("HH:mm", Locale.getDefault()) //Horario atual
         var data = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) //Dia atual
         var diaDaSemana = SimpleDateFormat("EEE", Locale.getDefault()) //Dia da semana atual
+
+        // Mostrar dia e horário que foi feito o login atual
         val diaLogin: TextView = findViewById(R.id.diaLogin)
         diaLogin.text = "Login feito no dia " + data.format(date) + " às " + horario.format(date)
 
+        // Array com as matérias que temos
         var arrayMaterias = arrayOf(
             "TRABALHO DE GRADUAÇÃO INTERDISCIPLINAR I",
-            "MATÉRIA TESTE TERÇA",
             "PROGRAMAÇÃO PARA DISPOSITIVOS MÓVEIS",
             "FUNDAMENTOS DE INTELIGÊNCIA ARTIFICIAL",
             "LINGUAGENS FORMAIS E AUTÔMATOS")
 
+        var arrayDiasDaSemanaComAula = arrayOf(
+            "Mon", "Wed", "Thu", "Fri"
+        )
 
         val materiaDoDia: TextView = findViewById(R.id.materiaDoDia)
         val situacaoAula: TextView = findViewById(R.id.situacaoAula)
+        val localizacao: TextView = findViewById(R.id.localizacao)
         val presenca: TextView = findViewById(R.id.presenca)
         val btnPresenca: Button = findViewById(R.id.btnPresenca)
 
+        // Informações da aula (horário e localização)
         var horarioAulaInicio = SimpleDateFormat("19:10", Locale.getDefault()) //Horário da aula 19:10 as 21:50
         var horarioAulaFim = SimpleDateFormat("21:50", Locale.getDefault()) //Horário da aula 19:10 as 21:50
         var latitudeSala = -23.5362 //Latitude da sala
         var longitudeSala = -46.5603 //Longitude da sala
 
-        var registro = false
-        var numMateria = 0
-
-
-        if(diaDaSemana.format(date) == "Mon"){
-            materiaDoDia.text = arrayMaterias[0]
-            numMateria = 0
-        }
-        if(diaDaSemana.format(date) == "Tue"){
-            materiaDoDia.text = arrayMaterias[1]
-            numMateria = 1
-        }
-        if(diaDaSemana.format(date) == "Wed"){
-            materiaDoDia.text = arrayMaterias[2]
-            numMateria = 2
-        }
-        if(diaDaSemana.format(date) == "Thu"){
-            materiaDoDia.text = arrayMaterias[3]
-            numMateria = 3
-        }
-        if(diaDaSemana.format(date) == "Fri"){
-            materiaDoDia.text = arrayMaterias[4]
-            numMateria = 4
-        }
-        if(diaDaSemana.format(date) == "Sat"){
-            materiaDoDia.text = "Hoje é sábado, dia de descansar!"
-        }
-        if(diaDaSemana.format(date) == "Sun"){
-            materiaDoDia.text = "Hoje é domingo, dia de descansar!"
+        // While para verificar qual matéria temos hoje
+        var contMaterias = 0 // Contador
+        var quantMaterias = 4 // Quantidade de matérias
+        var numMateria = 0 // Guardar o índice da matéria
+        while(contMaterias < quantMaterias) {
+            if(diaDaSemana.format(date) == arrayDiasDaSemanaComAula[contMaterias]) {
+                materiaDoDia.text = arrayMaterias[contMaterias]
+                numMateria = contMaterias
+            break
+            } else {
+                materiaDoDia.text = "Hoje não temos aula"
+                contMaterias++
+            }
         }
 
+        btnPresenca.setVisibility(View.INVISIBLE)
         var latitude: Double
         var longitude: Double
+        // Checar permissões de localização
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
             ActivityCompat.requestPermissions(this,arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),1)
@@ -99,18 +97,20 @@ class AreaDoAluno : AppCompatActivity() {
             val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val locationListener: LocationListener = object : LocationListener {
                 override fun onLocationChanged(location: Location) {
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
+                    latitude = location.getLatitude(); // Obter latitude atual
+                    longitude = location.getLongitude(); // Obter longitude atual
                     //latitude = -23.5362
                     //longitude = -46.5603
-                    situacaoAula.text = "lat: " + formatarGeopoint(latitude) + " long: " + formatarGeopoint(longitude)
+                    localizacao.text = "Localização atual - Lat: " + formatarGeopoint(latitude) + " | Long: " + formatarGeopoint(longitude)
+                    // Primeiro IF verifica localização e o segundo o horário
                     if(((formatarGeopoint(latitude)) == formatarGeopoint(latitudeSala)) && (formatarGeopoint(longitude) == formatarGeopoint(longitudeSala))){
                         if((horario.format(date) >= horarioAulaInicio.format(date)) && (horario.format(date) <= horarioAulaFim.format(date)) && (registro == false)) {
+                            btnPresenca.setVisibility(View.VISIBLE)
                             situacaoAula.text = "Sua aula começou, boa aula! Você tem até as 21:50 para registrar sua presença!"
                             presenca.text = "Presença: DISPONÍVEL"
                             btnPresenca.setOnClickListener {
-                                situacaoAula.text = "Localização: " + formatarGeopoint(latitude) + ", " + formatarGeopoint(longitude)
-                                presenca.text = "Presença: REGISTRADA - Às: " + horario.format(date)
+                                situacaoAula.text = "Tudo certinho, muito obrigado!"
+                                presenca.text = "Presença: REGISTRADA - Às: " + horario.format(date) + " em: " + formatarGeopoint(latitude) + ", " + formatarGeopoint(longitude)
                                 registro = true
                                 Toast.makeText(
                                     applicationContext,
@@ -125,6 +125,7 @@ class AreaDoAluno : AppCompatActivity() {
                         }
                     } else{
                         if((horario.format(date) >= horarioAulaInicio.format(date)) && (horario.format(date) <= horarioAulaFim.format(date)) && (registro == false)) {
+                            btnPresenca.setVisibility(View.VISIBLE)
                             situacaoAula.text = "Sua aula começou, boa aula! Você tem até as 21:50 para registrar sua presença!"
                             presenca.text = "Presença: Disponível"
                             btnPresenca.setOnClickListener {
@@ -146,12 +147,10 @@ class AreaDoAluno : AppCompatActivity() {
             Toast.makeText(this, "Erro:" + ex.message, Toast.LENGTH_LONG).show()
         }
 
-
         val btnCronograma: Button = findViewById(R.id.btnCronograma)
         btnCronograma.setOnClickListener {
             val telaCronogramaDeAulas = Intent(this, CronogramaDeAulas::class.java)
             startActivity(telaCronogramaDeAulas)
-            Toast.makeText(applicationContext, "Indo para o cronograma de aulas!", Toast.LENGTH_LONG).show()
         }
 
         val btnDeslogar: Button = findViewById(R.id.btnDeslogar)
@@ -160,17 +159,27 @@ class AreaDoAluno : AppCompatActivity() {
             finish()
         }
 
-
-
-
-
-
     }
 
+    // Função para formatar a localização
     private fun formatarGeopoint(valor: Double): String? {
         val decimalFormat = DecimalFormat("#.####")
         return decimalFormat.format(valor)
     }
+
+    override fun onRestart() {
+        super.onRestart()
+    }
+    override fun onResume() {
+        super.onResume()
+    }
+    override fun onPause() {
+        super.onPause()
+    }
+    override fun onStop() {
+        super.onStop()
+    }
+
 
 }
 
